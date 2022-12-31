@@ -123,6 +123,7 @@ class MusicPlayer(EventEmitter, Serializable):
         super().__init__()
         self.bot = bot
         self.loop = bot.loop
+        self.loopqueue = False
         self.voice_client = voice_client
         self.playlist = playlist
         self.autoplaylist = None
@@ -202,7 +203,8 @@ class MusicPlayer(EventEmitter, Serializable):
 
     def _playback_finished(self, error=None):
         entry = self._current_entry
-
+        if self.loopqueue:
+            self.playlist.entries.append(entry)
         if self._current_player:
             self._current_player.after = None
             self._kill_current_player()

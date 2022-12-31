@@ -2156,7 +2156,26 @@ class MusicBot(discord.Client):
                     traceback.print_exc()
 
         return Response(reply_text, delete_after=30)
+    async def cmd_loop(self, channel):
+            """
+            Usage:
+                {command_prefix}loop
+            Toggles playlist looping on or off.
+            """
+            player = self.get_player_in(channel.guild)
+            if not player:
+                raise exceptions.CommandError(
+                    "The bot is not in a voice channel.  "
+                    "Use %ssummon to summon it to your voice channel."
+                    % self.config.command_prefix
+                )
+            player.loopqueue = not player.loopqueue
 
+            if player.loopqueue:
+                return Response("Playlist is now looping!", delete_after=30)
+            else:
+                return Response("Playlist is no longer looping!", delete_after=30)
+                
     async def _cmd_play_playlist_async(
         self, player, channel, author, permissions, playlist_url, extractor_type
     ):
